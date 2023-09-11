@@ -25,6 +25,7 @@ get key ((_, firstValue):dict) = foldr getKey firstValue dict
                                where getKey (x, thisValue) res = if x == key then thisValue else res
 
 {-
+ -- Esta era una versión alternativa que consideramos, la dejamos por si acaso
 get key dict = getValue (foldr1 getKey dict)
              where getKey (x, thisValue) res = if x == key then (x, thisValue) else res
                    getValue (_, value) = value
@@ -65,9 +66,9 @@ type Reducer k v b = (k, [v]) -> [b]
 
 -- Ejercicio 6
 distributionProcess :: Int -> [a] -> [[a]]
--- Itera sobre la lista y la distribuye en numberOfBins listas yendo en órden y circulando.
+-- Itera sobre la lista y la distribuye en numberOfBins listas yendo en órden y circulando para asegurarse que esté balanceada, ya que en el peor caso van a haber algunas con n y otras con n-1 elementos.
 distributionProcess numberOfBins xs = getBins (foldr distribute (replicate numberOfBins [], 0) xs)
-                                    where distribute elem (bins, thisBin) = (addToBin thisBin elem bins, nextBin thisBin)
+                                    where distribute elem (bins, thisBin) = (addToBin thisBin elem bins, nextBin thisBin) -- Lleva en thisBin el índice al que le tiene que colocar este elemento
                                           addToBin n elem bins = (take n bins) ++ [(elem:(bins!!n))] ++ (drop (n+1) bins)
                                           getBins (bins, _) = bins
                                           nextBin thisBin = mod (thisBin+1) numberOfBins
