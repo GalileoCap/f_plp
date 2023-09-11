@@ -203,42 +203,56 @@ allTests = test [
   
 testsEj1 = test [
   ([("calle",[3]),("ciudad",[2,1])] ? "ciudad")  ~=? True,
-  ([("calle",[3]),("ciudad",[2,1])] ? "perro")  ~=? False --Agregar sus propios tests.
+  ([("calle",[3]),("ciudad",[2,1])] ? "perro")  ~=? False, --Agregar sus propios tests.
+  ([("calle",[3]),("ciudad",[2,1])] ? "calle")  ~=? True
   ]
 
 testsEj2 = test [
-  [("calle","San Blas"),("ciudad","Hurlingham")] ! "ciudad" ~=? "Hurlingham" --Agregar sus propios tests.
+  [("calle","San Blas"),("ciudad","Hurlingham")] ! "ciudad" ~=? "Hurlingham", --Agregar sus propios tests.
+  [("calle","San Blas"),("ciudad","Hurlingham")] ! "calle" ~=? "San Blas"
   ]
 
 testsEj3 = test [
   (insertWith (++) 1 [99] [(1, [1]), (2, [2])]) ~=? [(1,[1,99]),(2,[2])], --Agregar sus propios tests.
-  (insertWith (++) 1 [99] [(2, [2])]) ~=? [(1,[99]),(2,[2])]
+  (insertWith (++) 1 [99] [(2, [2])]) ~=? [(1,[99]),(2,[2])],
+  (insertWith (++) 1 [99, 30] [(1, [1]), (2, [2])]) ~=? [(1,[1, 99, 30]),(2,[2])],
+  (insertWith max 1 99 [(1, 30)]) ~=? [(1,99)],
+  (insertWith max 1 30 [(1, 88)]) ~=? [(1,88)]
   ]
 
 testsEj4 = test [
-  (groupByKey [("calle", "Jean Jaures"), ("ciudad", "Brujas"), ("ciudad", "Kyoto"), ("calle", "7")]) ~=? [("ciudad",["Kyoto","Brujas"]),("calle",["7","Jean Jaures"])]
-
+  (groupByKey [("calle", "Jean Jaures"), ("ciudad", "Brujas"), ("ciudad", "Kyoto"), ("calle", "7")]) ~=? [("ciudad",["Kyoto","Brujas"]),("calle",["7","Jean Jaures"])],
+  (groupByKey [(True, "Pizza"), (False, "Mayonesa"), (True, "Hamburguesa"), (False, "Jungla"), (False, "Tofu")]) ~=? [(True,["Hamburguesa","Pizza"]),(False,["Tofu","Jungla","Mayonesa"])],
+  (groupByKey [(3, 6), (3, 9), (3, 15), (7, 21), (7, 35), (3, 15), (3, 21), (7, 14)]) ~=? [(3, [21, 15, 15, 9, 6]),(7, [14, 35, 21])]
   ]
 
 testsEj5 = test [
-  (unionWith (+) [("rutas",3)] [("rutas", 4), ("ciclos", 1)]) ~=? [("rutas",7),("ciclos",1)] --Agregar sus propios tests.
+  (unionWith (+) [("rutas",3)] [("rutas", 4), ("ciclos", 1)]) ~=? [("rutas",7),("ciclos",1)], --Agregar sus propios tests.
+  (unionWith (++) [("cubiertas", [4]), ("trompetas", [3])] [("cubiertas", [12])]) ~=? [("trompetas", [3]), ("cubiertas", [12, 4])],
+  (unionWith max [("cubiertas", 4), ("trompetas", 3)] [("cubiertas", 12)]) ~=? [("trompetas", 3), ("cubiertas", 12)]
   ]
 
 testsEj6 = test [
-  (distributionProcess 5 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12]) ~=? [[2,7,12],[1,6,11],[5,10],[4,9],[3,8]]
+  (distributionProcess 5 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12]) ~=? [[2,7,12],[1,6,11],[5,10],[4,9],[3,8]],
+  (distributionProcess 2 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12]) ~=? [[2,4,6,8,10,12],[1,3,5,7,9,11]],
+  (distributionProcess 1 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12]) ~=? [[1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12]],
+  (distributionProcess 12 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10]) ~=? [[10],[9],[8],[7],[6],[5],[4],[3],[2],[1],[],[]]
   ]
 
 testsEj7 = test [
-  mapperProcess mapperRestos [1, 5, 10, 25, 3, 14, 4] ~=? [(1,[1]),(0,[25,10,5]),(3,[3]),(4,[4,14])]
+  mapperProcess mapperRestos [1, 5, 10, 25, 3, 14, 4] ~=? [(1,[1]),(0,[25,10,5]),(3,[3]),(4,[4,14])],
+  mapperProcess mapperMPP items ~=? [("Argentina",[(),()]),("Irak",[()])]
   ]
 
 testsEj8 = test [
-  (map (\(x,y)->(x,sort y)) $ combinerProcess palabras) ~=? [(1,["Chau","Hola","Saludos"]),(2,["Gato","Jirafa","Perro","Perro"]),(3,["Casa"]),(4,["Auto","Barco","Tren"])]
- --Agregar sus propios tests.
+  (map (\(x,y)->(x,sort y)) $ combinerProcess palabras) ~=? [(1,["Chau","Hola","Saludos"]),(2,["Gato","Jirafa","Perro","Perro"]),(3,["Casa"]),(4,["Auto","Barco","Tren"])], --Agregar sus propios tests.
+  combinerProcess [[("Medias", ["L", "XL"]), ("Alfajores", ["Maicena"])], [("Medias", ["S"])], [("Zapatillas", ["41", "42"])], [("Zapatillas", ["36", "37"])]] ~=? [("Alfajores",["Maicena"]),("Medias",["S","L","XL"]),("Zapatillas",["36","37","41","42"])]
   ]
 
 testsEj9 = test [
-  reducerProcess (\(x, xs)->x : nub xs)  [("Saludo:",["Chau","Hola","Saludos"]),("Mamífero:",["Gato","Jirafa","Perro","Perro"]),("Edificio:",["Casa"]),("Vehículo:",["Auto","Barco","Tren"])] ~=? ["Saludo:","Chau","Hola","Saludos","Mamífero:","Gato","Jirafa","Perro","Edificio:","Casa","Vehículo:","Auto","Barco","Tren"] --Agregar sus propios tests.
+  reducerProcess (\(x, xs)->x : nub xs)  [("Saludo:",["Chau","Hola","Saludos"]),("Mamífero:",["Gato","Jirafa","Perro","Perro"]),("Edificio:",["Casa"]),("Vehículo:",["Auto","Barco","Tren"])] ~=? ["Saludo:","Chau","Hola","Saludos","Mamífero:","Gato","Jirafa","Perro","Edificio:","Casa","Vehículo:","Auto","Barco","Tren"], --Agregar sus propios tests.
+  reducerProcess (\(x, xs)-> if elem True xs then x ++ " " else "") [("Pizza", [True]), ("Queso", [False, False]), ("Harina", [False]), ("Tomate", [True]), ("Panceta", [True, True]), ("Pimienta", [False, True])] ~=? "Pizza Tomate Panceta Pimienta ",
+  reducerProcess (\(x, xs)->max x (head xs) : []) [(3, [5]), (7, [5]), (9, [11, 13])] ~=? [5, 7, 11]
   ]
 
 testsEj10 = test [
