@@ -55,15 +55,42 @@ function ejercicio5() {
   Milonga = new Robot("Milonga", 1200, "mensajear", mensajear);
 }
 
-
 // Ejercicio 6
 function ejercicio6() {
+    RobotMensajero = function (n, p, d, f) {
+        Robot.call(this, n, p, d, f);
+    }
+    RobotMensajero.prototype.mensajear = Milonga.mensajear;
 
 }
 
 // Ejercicio 7
 function ejercicio7() {
+  //testear que Malambo y Chacarera saben reprogramar
+    Object.setPrototypeOf(Malambo, Milonga);
+    Object.setPrototypeOf(Chacarera, Milonga);
 
+    Robot.prototype.reprogramar = function(nueva_dir, func_dir){
+      delete this[this.directiva];
+      if(nueva_dir == this.directiva){
+        this.directiva = "...";
+      } else {
+        this.directiva = nueva_dir;
+        this[nueva_dir] = func_dir; 
+      }
+    }
+    
+    Robot.prototype.solicitarAyuda = function(r){
+      if(this.ayudante == undefined){
+        this.ayudante = r;
+        if(this.directiva !== r.directiva){
+          r.reprogramar(this.directiva, this[this.directiva]);
+        }
+      } else {
+        this.ayudante.solicitarAyuda(r);
+      }
+    }
+    
 }
 
 // Editen esta función para que devuelva lo que quieran mostrar en la salida.
