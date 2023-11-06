@@ -109,6 +109,20 @@ function calcularResultado() {
   res += "<b>Ejercicio 6</b>\n" + crearTest(6, testEjercicio6)();
   res += "\n";
   res += "<b>Ejercicio 7</b>\n" + crearTest(7, testEjercicio7)();
+  res += "\n";
+  res += "<b>Ejercicio Extra 1</b>\n" + crearTest(1, testExtra1)();
+  res += "\n";
+  res += "<b>Ejercicio Extra 2</b>\n" + crearTest(2, testExtra2)();
+  res += "\n";
+  res += "<b>Ejercicio Extra 3</b>\n" + crearTest(3, testExtra3)();
+  res += "\n";
+  res += "<b>Ejercicio Extra 4</b>\n" + crearTest(4, testExtra4)();
+  res += "\n";
+  res += "<b>Ejercicio Extra 5</b>\n" + crearTest(5, testExtra5)();
+  res += "\n";
+  res += "<b>Ejercicio Extra 6</b>\n" + crearTest(6, testExtra6)();
+  res += "\n";
+  res += "<b>Ejercicio Extra 7</b>\n" + crearTest(7, testExtra7)();
   return res;
 }
 
@@ -278,6 +292,89 @@ function testEjercicio7(res) {
   res.test(malambo_sabe_pedir_ayuda);
   res.test(chacarera_sabe_pedir_ayuda);
 }
+
+
+
+
+
+function testExtra1(res) {
+  res.write("Directiva de Malambo: " + Malambo.directiva);
+  res.test(Malambo.directiva, "limpiar")
+}
+
+
+function testExtra2(res) {
+  res.write("Directiva de Chacarera: " + Chacarera.directiva);
+  res.test(Chacarera.directiva, "cortar el pasto");
+}
+
+
+function testExtra3(res) {
+  peso_malambo = Malambo.peso
+  res.write("Peso de Malambo antes de limpiar: " + peso_malambo);
+  Malambo.limpiar();
+  peso_malambo++;
+  res.test(Malambo.limpiar(), "limpiar");
+  peso_malambo ++;
+  res.write("Peso de Malambo después de limpiar 2 veces: " + peso_malambo);
+  res.test(Malambo.peso, peso_malambo);
+}
+
+
+function testExtra4(res) {
+  let Conejo = new Robot("Conejo", 250, "saltar", function(){return "en primavera"});
+  res.write("Presentacion de Conejo: " + Conejo.presentarse());
+  res.test(Conejo.presentarse(), "Hola, soy Conejo y me encanta saltar.");
+  res.write("Presentacion de Malambo: " + Malambo.presentarse());
+  res.test(Malambo.presentarse(), "Hola, soy Malambo y me encanta limpiar.");
+}
+
+
+function testExtra5(res) {
+  res.write("Peso de Malambo: " + Malambo.peso);
+  let peso_malambo = Malambo.peso;
+  let resultado = Milonga.mensajear(Malambo,Malambo,"limpiar")
+  res.write("Resultado Malambo -> limpiar -> Malambo: " + resultado);
+  res.test(resultado, "limpiar");
+  peso_malambo++;
+  peso_malambo++;
+  res.write("Peso de Malambo: " + Malambo.peso);
+  res.test(Malambo.peso, peso_malambo);
+}
+
+
+function testExtra6(res) {
+  let Paloma = new RobotMensajero("Paloma", 10, "Volar", function(){this.peso = this.peso - 1; return "Cansada"})
+  let peso_paloma = Paloma.peso;
+  let peso_chacarera = Chacarera.peso;
+  let resultado = Paloma.mensajear(Chacarera, Paloma, "Volar")
+  peso_paloma--;
+  res.write("Resultado Chacarera -> Volar -> Paloma: " + resultado);
+  res.test(resultado, "Cansada");
+  res.write("Peso de Paloma: " + Paloma.peso);
+  res.test(Paloma.peso, peso_paloma);
+  res.write("Peso de Chacarera: " + Chacarera.peso);
+  res.test(Chacarera.peso, peso_chacarera);
+  Paloma.Volar();
+  peso_paloma--;
+  res.write("Peso de Paloma: " + Paloma.peso);
+  res.test(Paloma.peso, peso_paloma);
+}
+
+
+function testExtra7(res) {
+  let Paloma = new Robot("Paloma", 10, "Volar", function(){this.peso = this.peso - 1; return "Cansada"})
+  let Conejo = new Robot("Conejo", 250, "saltar", function(){return "en primavera"});
+  Paloma.solicitarAyuda(Conejo);
+  res.write("Paloma solicita ayuda de Conejo");
+  res.write("Presentacion de Conejo: " + Conejo.presentarse());
+  res.test(Conejo.presentarse(), "Hola, soy Conejo y me encanta saltar.");
+}
+
+
+
+
+
 
 function nombre(objeto) {
   if (objeto) return objeto.nombre;
