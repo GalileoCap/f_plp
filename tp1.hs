@@ -24,12 +24,11 @@ get :: Eq k => k -> Dict k v -> v
 get key ((_, firstValue):dict) = foldr getKey firstValue dict
                                where getKey (x, thisValue) res = if x == key then thisValue else res
 
-{-
- -- Esta era una versión alternativa que consideramos, la dejamos por si acaso
-get key dict = getValue (foldr1 getKey dict)
-             where getKey (x, thisValue) res = if x == key then (x, thisValue) else res
-                   getValue (_, value) = value
--}
+
+-- get key dict = getValue (foldr1 getKey dict)
+--              where getKey (x, thisValue) res = if x == key then (x, thisValue) else res
+--                    getValue (_, value) = value
+
 
 
 (!) :: Eq k => Dict k v -> k -> v
@@ -66,13 +65,15 @@ type Reducer k v b = (k, [v]) -> [b]
 
 -- Ejercicio 6
 distributionProcess :: Int -> [a] -> [[a]]
--- Itera sobre la lista y la distribuye en numberOfBins listas yendo en órden y circulando para asegurarse que esté balanceada, ya que en el peor caso van a haber algunas con n y otras con n-1 elementos.
-distributionProcess numberOfBins xs = getBins (foldr distribute (replicate numberOfBins [], 0) xs)
-                                    where distribute elem (bins, thisBin) = (addToBin thisBin elem bins, nextBin thisBin) -- Lleva en thisBin el índice al que le tiene que colocar este elemento
-                                          addToBin n elem bins = (take n bins) ++ [(elem:(bins!!n))] ++ (drop (n+1) bins)
-                                          getBins (bins, _) = bins
-                                          nextBin thisBin = mod (thisBin+1) numberOfBins
+-- distributionProcess numberOfBins xs = getBins (foldr distribute (replicate numberOfBins [], 0) xs)
+--                                     where distribute elem (bins, thisBin) = (addToBin thisBin elem bins, nextBin thisBin)
+--                                           addToBin n elem bins = (take n bins) ++ [(elem:(bins!!n))] ++ (drop (n+1) bins)
+--                                           getBins (bins, _) = bins
+--                                           nextBin thisBin = mod (thisBin+1) numberOfBins
 
+-- Itera sobre la lista bins agregando al primer bin y mandandolo al fondo para mantener una cantidad pareja.
+distributionProcess numberOfBins xs = foldr distribute (replicate numberOfBins []) xs
+                                    where distribute elem (bin:bins) = bins ++ [elem:bin]
 -- Ejercicio 7
 mapperProcess :: Eq k => Mapper a k v -> [a] -> Dict k [v]
 mapperProcess mapper elems = groupByKey (foldr applyMapper [] elems)
@@ -234,10 +235,10 @@ testsEj5 = test [
   ]
 
 testsEj6 = test [
-  (distributionProcess 5 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12]) ~=? [[2,7,12],[1,6,11],[5,10],[4,9],[3,8]],
+  (distributionProcess 5 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12]) ~=? [[5,10],[4,9],[3,8],[2,7,12],[1,6,11]],
   (distributionProcess 2 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12]) ~=? [[2,4,6,8,10,12],[1,3,5,7,9,11]],
   (distributionProcess 1 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12]) ~=? [[1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12]],
-  (distributionProcess 12 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10]) ~=? [[10],[9],[8],[7],[6],[5],[4],[3],[2],[1],[],[]]
+  (distributionProcess 12 [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10]) ~=? [[],[],[10],[9],[8],[7],[6],[5],[4],[3],[2],[1]]
   ]
 
 testsEj7 = test [
